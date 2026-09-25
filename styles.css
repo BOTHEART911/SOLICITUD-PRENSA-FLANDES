@@ -1,0 +1,550 @@
+/* ============================================================
+   SOLICITUD-PRENSA-FLANDES · ESTILOS PROPIOS
+   Ajuste previo a la Fase 11 · 25/09/2026
+
+   La base (vista, saludo, formulario, campos, trámites) sale TAL CUAL
+   de CONTRATISTA-FLANDES, para que la web se vea igual que la app. Los
+   colores y el modo oscuro los pone kit/base.css: aquí no hay colores a
+   mano, solo sus variables.
+   ============================================================ */
+
+/* ---- de CONTRATISTA-FLANDES: vista, saludo, datos, formulario ---- */
+.vista {
+  padding: 0 16px calc(28px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Cada bloque de la vista entra escalonado. Es lo que separa una
+   pantalla que "aparece" de una que se monta con intención. */
+.vista > * {
+  animation: sube .42s cubic-bezier(.22, 1, .36, 1) both;
+}
+.vista > *:nth-child(1) { animation-delay: .02s; }
+.vista > *:nth-child(2) { animation-delay: .07s; }
+.vista > *:nth-child(3) { animation-delay: .12s; }
+.vista > *:nth-child(4) { animation-delay: .17s; }
+.vista > *:nth-child(5) { animation-delay: .22s; }
+@keyframes sube {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- cabecera con saludo ----------
+   Ocupa todo el ancho y se sale del padding de la vista a propósito:
+   una franja de marca de borde a borde ancla la pantalla y da la
+   profundidad que una tarjeta blanca sobre gris no da. */
+
+.saludo {
+  position: relative;
+  margin: 0 -16px;
+  padding: 18px 20px 58px;
+  overflow: hidden;
+  color: #fff;
+  background:
+    radial-gradient(120% 90% at 12% 0%, var(--k-marca-clara) 0%, var(--k-marca) 46%, var(--k-marca-2) 100%);
+}
+/* 4.6.1 · la luz de esta franja ya NO se pinta aquí.
+   Había una mancha fija en ::after y encima llegó el cielo del kit con su
+   aurora: dos luces sumadas dejaban el lado derecho lavado, sobre todo en
+   modo noche, donde el verde de la marca es más claro. La luz la pone una
+   sola pieza, kit/cielo.css, y se corrige en un solo sitio. */
+.saludo__hola {
+  margin: 0;
+  font-size: .92rem;
+  color: rgba(255, 255, 255, .78);
+}
+.saludo__nombre {
+  margin: 2px 0 0;
+  font: 700 1.62rem/1.15 var(--k-fuente-titulo);
+  letter-spacing: -.3px;
+}
+.saludo__doc {
+  margin: 6px 0 0;
+  display: inline-block;
+  font-size: .78rem;
+  padding: 4px 10px;
+  border-radius: var(--k-r-pill);
+  background: rgba(255, 255, 255, .16);
+  border: 1px solid rgba(255, 255, 255, .22);
+}
+
+/* ---------- resumen del contrato ----------
+   Monta sobre la franja verde, mitad dentro y mitad fuera. */
+
+.resumen {
+  margin-top: -46px;
+  position: relative;
+  z-index: 1;
+}
+.resumen__caja {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 16px;
+  border-radius: 18px;
+  background: var(--k-papel);
+  border: 1px solid var(--k-linea);
+  box-shadow: 0 20px 44px -26px rgba(var(--k-marca-rgb), .7);
+}
+.resumen__fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 0;
+  border-top: 1px solid var(--k-linea);
+}
+.resumen__fila:first-child { border-top: 0; }
+.resumen__fila span {
+  color: var(--k-apagado);
+  font-size: .86rem;
+}
+.resumen__fila b {
+  color: var(--k-tinta);
+  text-align: right;
+  font-weight: 600;
+  min-width: 0;
+  /* "SECRETARÍA DE EDUCACIÓN, DESARROLLO ECONÓMICO Y SOCIAL" es un valor
+     real de la hoja: sin esto empuja la tarjeta hasta el borde. */
+  font-size: .92rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- accesos ---------- */
+
+.accesos { gap: 12px; }
+
+.acceso {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 16px;
+  text-align: left;
+  border: 1px solid var(--k-linea);
+  border-radius: 18px;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  overflow: hidden;
+  background: var(--k-papel);
+  transition: transform .15s cubic-bezier(.22, 1, .36, 1), box-shadow .2s ease, border-color .2s ease;
+}
+.acceso:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--k-marca) 30%, transparent);
+  box-shadow: 0 18px 36px -20px rgba(var(--k-marca-rgb), .75);
+}
+.acceso:active { transform: scale(.985); }
+
+/* Filo de marca en el canto izquierdo: marca el bloque sin gritar. */
+.acceso::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 14%; bottom: 14%;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: linear-gradient(180deg, var(--k-marca-clara), var(--k-marca-2));
+  opacity: .9;
+}
+
+.acceso__img {
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  padding: 7px;
+  border-radius: 14px;
+  background: rgba(var(--k-marca-rgb), .08);
+}
+.acceso__t {
+  display: block;
+  font-family: var(--k-fuente-titulo);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--k-tinta);
+}
+.acceso__p {
+  display: block;
+  margin-top: 2px;
+  font-size: .82rem;
+  line-height: 1.35;
+  color: var(--k-apagado);
+}
+
+/* La flecha de "entra aquí", dibujada con CSS. */
+.acceso::after {
+  content: '';
+  position: absolute;
+  right: 16px;
+  width: 8px; height: 8px;
+  border-right: 2px solid var(--k-apagado);
+  border-top: 2px solid var(--k-apagado);
+  transform: rotate(45deg);
+  transition: transform .18s ease, border-color .18s ease;
+}
+.acceso:hover::after {
+  border-color: var(--k-marca);
+  transform: rotate(45deg) translate(2px, -2px);
+}
+
+/* El texto va en columna y con sitio para la flecha. Sin esta columna, el
+   título y la descripción compiten por el ancho y "Datos del proceso" se
+   parte en dos líneas mientras la descripción se queda a su lado. */
+.acceso__txt {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding-right: 16px;
+}
+
+/* ---------- fichas de datos ---------- */
+
+.grupo {
+  padding: 16px 16px 8px;
+  border-radius: 18px;
+  border: 1px solid var(--k-linea);
+  background: var(--k-papel);
+}
+.grupo__t {
+  margin: 0 0 12px;
+  padding-left: 11px;
+  position: relative;
+  font-family: var(--k-fuente-titulo);
+  font-size: 1.02rem;
+  color: var(--k-tinta);
+}
+.grupo__t::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 3px; bottom: 3px;
+  width: 3px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--k-marca-clara), var(--k-marca));
+}
+
+.dato {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 0;
+  border-top: 1px solid var(--k-linea);
+}
+.dato:first-of-type { border-top: 0; }
+
+.dato__e {
+  flex: 0 0 auto;
+  color: var(--k-apagado);
+  font-size: .84rem;
+}
+.dato__v {
+  flex: 1 1 auto;
+  text-align: right;
+  color: var(--k-tinta);
+  font-weight: 500;
+  word-break: break-word;
+}
+
+/* El objeto del contrato es un párrafo entero: al lado de su etiqueta
+   queda ilegible en un teléfono, así que baja a su propia línea. */
+.dato--largo { flex-direction: column; align-items: stretch; gap: 5px; }
+.dato--largo .dato__v {
+  text-align: left;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--k-papel-2);
+}
+
+/* ---------- formulario de mis datos ---------- */
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid var(--k-linea);
+  background: var(--k-papel);
+}
+.formulario__nota {
+  margin: 0;
+  font-size: .8rem;
+  line-height: 1.45;
+  color: var(--k-apagado);
+}
+.formulario .kit-btn--marca {
+  margin-top: 4px;
+  border-radius: var(--k-r-pill);
+  padding: 14px 18px;
+  background: linear-gradient(135deg, var(--k-marca-clara), var(--k-marca) 60%, var(--k-marca-2));
+  box-shadow: 0 16px 32px -16px rgba(var(--k-marca-rgb), .85);
+}
+
+.campo { display: flex; flex-direction: column; gap: 6px; }
+.campo > span {
+  font-size: .84rem;
+  color: var(--k-apagado);
+}
+.campo input {
+  font: inherit;
+  color: var(--k-tinta);
+  background: var(--k-papel-2);
+  border: 1px solid var(--k-linea);
+  border-radius: 13px;
+  padding: 13px 14px;
+  /* 16px reales: por debajo de eso, iOS hace zoom al enfocar el campo
+     y la pantalla se descoloca. */
+  font-size: 16px;
+  transition: border-color .16s ease, box-shadow .16s ease;
+}
+.campo input:focus {
+  outline: none;
+  border-color: var(--k-marca-clara);
+  box-shadow: 0 0 0 3px rgba(var(--k-marca-rgb), .16);
+}
+
+/* ---------- error ---------- */
+
+.error {
+  padding: 16px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  border: 1px solid color-mix(in srgb, var(--k-malo) 26%, transparent);
+  background: var(--k-papel);
+}
+.error__t { margin: 0; color: var(--k-malo); }
+
+/* ---------- pantallas anchas ---------- */
+
+@media (min-width: 760px) {
+  .vista { padding: 0 22px calc(34px + env(safe-area-inset-bottom)); }
+  .saludo { margin: 0 -22px; padding: 26px 26px 66px; border-radius: 0 0 26px 26px; }
+  .saludo__nombre { font-size: 1.9rem; }
+  .acceso { padding: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vista > * { animation: none; }
+  .acceso:hover { transform: none; }
+}
+/* ---- de CONTRATISTA-FLANDES: select, textarea y filas de campos ---- */
+/* Los tres controles se ven IGUAL. Un select que no case con el input de
+   al lado hace que el formulario parezca mal armado. */
+.campo select,
+.campo textarea {
+  font: inherit;
+  color: var(--k-tinta);
+  background: var(--k-papel-2);
+  border: 1px solid var(--k-linea);
+  border-radius: 13px;
+  padding: 13px 14px;
+  /* 16px reales: por debajo, iOS hace zoom al enfocar. */
+  font-size: 16px;
+  transition: border-color .16s ease, box-shadow .16s ease;
+}
+.campo textarea { resize: vertical; min-height: 68px; line-height: 1.45; }
+.campo select:focus,
+.campo textarea:focus {
+  outline: none;
+  border-color: var(--k-marca-clara);
+  box-shadow: 0 0 0 3px rgba(var(--k-marca-rgb), .16);
+}
+
+.campo__ayuda {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  color: var(--k-apagado);
+}
+.campo__ayuda b { color: var(--k-tinta-2); }
+
+/* Verde = el dato ya tiene la pinta correcta (el RP de 10 dígitos, el
+   municipio elegido de la lista). Es la señal que la gente ya conoce de
+   la app vieja, donde el borde del RP se ponía verde. */
+.campo--ok {
+  border-color: var(--k-ok) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--k-ok) 18%, transparent) !important;
+}
+/* Un campo que se calcula solo: se lee, no se escribe. */
+.campo--quieto {
+  background: var(--k-papel);
+  color: var(--k-tinta-2);
+  font-weight: 600;
+}
+
+.campo-fila { display: flex; gap: 12px; }
+.campo-fila > .campo { flex: 1 1 0; min-width: 0; }
+.campo-fila--botones { margin-top: 6px; }
+.campo-fila--botones .kit-btn { flex: 1 1 0; }
+/* ---- de CONTRATISTA-FLANDES: secciones y datos ---- */
+.seg-sec__t {
+  margin: 0 0 4px;
+  font: 800 .95rem/1.2 var(--k-fuente-titulo);
+  letter-spacing: .4px;
+  color: var(--k-tinta);
+}
+.seg-sec__p { margin: 0 0 14px; font: 400 .86rem/1.45 var(--k-fuente); color: var(--k-tinta-2); }
+.seg-nada { margin: 4px 0 0; font: 400 .88rem/1.45 var(--k-fuente); color: var(--k-apagado); }
+.seg-nada--malo { color: var(--k-malo); }
+.seg-datos { margin: 14px 0 0; display: grid; grid-template-columns: 1fr; gap: 0; }
+.seg-dato {
+  display: flex; justify-content: space-between; gap: 14px;
+  padding: 9px 0; border-top: 1px solid var(--k-linea);
+}
+.seg-dato dt { font: 500 .8rem/1.35 var(--k-fuente); color: var(--k-apagado); }
+.seg-dato dd { margin: 0; font: 600 .86rem/1.35 var(--k-fuente); color: var(--k-tinta); text-align: right; overflow-wrap: anywhere; }
+@media (min-width: 900px) {
+  .seg-datos { grid-template-columns: 1fr 1fr; column-gap: 28px; }
+  .seg-dato { display: grid; grid-template-columns: minmax(150px, 210px) 1fr; }
+  .seg-dato dd { text-align: left; }
+}
+
+/* ---- de CONTRATISTA-FLANDES: subtítulos y cabecera de trámites ---- */
+.grupo__t--sub {
+  margin-top: 10px;
+  font-size: .82rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--k-apagado);
+}
+.grupo__t--sub::before { display: none; }
+.ins-cab, .tr-cab { display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap; }
+.ins-cab__ico, .tr-cab__ico {
+  flex: 0 0 auto; width: 48px; height: 48px; border-radius: 14px;
+  display: grid; place-items: center;
+  background: rgba(var(--k-marca-rgb), .1); color: var(--k-marca);
+}
+:root[data-tema="oscuro"] .ins-cab__ico, :root[data-tema="oscuro"] .tr-cab__ico { color: var(--k-marca-clara); }
+.ins-cab__txt, .tr-cab__txt { flex: 1 1 220px; min-width: 0; }
+.ins-cab__t, .tr-cab__t { margin: 0 0 4px; font: 800 1.02rem/1.25 var(--k-fuente-titulo); color: var(--k-tinta); letter-spacing: .3px; }
+.ins-cab__p, .tr-cab__p { margin: 0 0 6px; font: 400 .88rem/1.5 var(--k-fuente); color: var(--k-tinta-2); }
+.ins-cab__accion { margin-left: auto; }
+.tr-cab__ir { margin-top: 4px; }
+/* ---- de CONTRATISTA-FLANDES: trámites (4.8) ---- */
+/* ---------- trámites ---------- */
+.tr-cerrada { display: flex; gap: 10px; align-items: flex-start; color: var(--k-aviso); background: var(--k-aviso-fondo); border-color: transparent; }
+.tr-cerrada p { margin: 0; font: 500 .9rem/1.5 var(--k-fuente); color: var(--k-tinta); }
+.tr-nueva__b { width: 100%; justify-content: center; }
+@media (min-width: 680px) { .tr-nueva__b { width: auto; } }
+.tr-form { margin-top: 4px; }
+.tr-oblig { font-style: normal; color: var(--k-malo); }
+.tr-cuenta { display: block; text-align: right; margin-top: 4px; font: 400 .72rem/1 var(--k-fuente); color: var(--k-apagado); }
+.tr-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.tr-chip svg { display: none; }
+.tr-chip[aria-pressed="true"] svg { display: inline-block; }
+.tr-chips--quietas .kit-pastilla { cursor: default; font-size: 12px; padding: 6px 10px; }
+
+.tr-tipos { display: grid; gap: 8px; }
+@media (min-width: 560px) { .tr-tipos { grid-template-columns: 1fr 1fr; } }
+.tr-tipo, .tr-cta {
+  appearance: none; text-align: left; cursor: pointer; color: inherit; font: inherit;
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 12px 14px; border-radius: var(--k-r-md); border: 1px solid var(--k-linea); background: var(--k-papel);
+  transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+}
+.tr-tipo b, .tr-cta b { display: block; font: 700 .9rem/1.3 var(--k-fuente); color: var(--k-tinta); }
+.tr-tipo small, .tr-cta small { display: block; font: 400 .76rem/1.35 var(--k-fuente); color: var(--k-apagado); }
+.tr-tipo__ico { color: var(--k-marca); display: inline-flex; margin-top: 1px; }
+:root[data-tema="oscuro"] .tr-tipo__ico { color: var(--k-marca-clara); }
+.tr-tipo[aria-checked="true"], .tr-cta[aria-checked="true"] {
+  border-color: var(--k-marca); background: rgba(var(--k-marca-rgb), .07);
+  box-shadow: 0 0 0 3px rgba(var(--k-marca-rgb), .15);
+}
+.tr-cuentas__lista { display: grid; gap: 8px; }
+@media (min-width: 680px) { .tr-cuentas__lista { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tr-cta { flex-direction: column; gap: 4px; }
+.tr-cta__cab { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 8px; }
+.tr-cta--no { opacity: .72; cursor: not-allowed; background: var(--k-papel-2); }
+.tr-cta__por { display: flex !important; gap: 5px; align-items: flex-start; color: var(--k-aviso) !important; }
+.tr-cta__por svg { flex: 0 0 auto; margin-top: 1px; }
+
+.tr-lista { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.tr-sol {
+  position: relative; border: 1px solid var(--k-linea); border-radius: var(--k-r-md);
+  background: var(--k-papel); padding: 12px 14px 12px 18px; overflow: hidden;
+}
+.tr-sol::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--k-aviso); }
+.tr-sol--ok::before { background: var(--k-ok); }
+.tr-sol--info::before { background: var(--k-marca-clara); }
+.tr-sol--malo::before { background: var(--k-malo); }
+.tr-sol summary { list-style: none; cursor: pointer; display: flex; flex-direction: column; gap: 4px; }
+.tr-sol summary::-webkit-details-marker { display: none; }
+.tr-sol__cab { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.tr-sol__cab b { font: 700 .82rem/1.2 var(--k-fuente); color: var(--k-apagado); letter-spacing: .4px; font-variant-numeric: tabular-nums; }
+.tr-sol__t { font: 700 .92rem/1.35 var(--k-fuente); color: var(--k-tinta); overflow-wrap: anywhere; }
+.tr-sol__meta { display: block; font: 400 .76rem/1.35 var(--k-fuente); color: var(--k-apagado); }
+.tr-sol__quien { display: inline-flex; gap: 5px; align-items: center; font: 600 .78rem/1.3 var(--k-fuente); color: var(--k-ok); }
+.tr-sol__cuerpo { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--k-linea); display: flex; flex-direction: column; gap: 10px; }
+.tr-sol__det { margin: 4px 0 0; font: 400 .88rem/1.55 var(--k-fuente); color: var(--k-tinta); overflow-wrap: anywhere; }
+.tr-est {
+  flex: 0 0 auto; padding: 3px 10px; border-radius: var(--k-r-pill);
+  font: 700 .7rem/1.4 var(--k-fuente); letter-spacing: .3px;
+  background: var(--k-aviso-fondo); color: var(--k-aviso);
+}
+.tr-est--ok { background: var(--k-ok-fondo); color: var(--k-ok); }
+.tr-est--info { background: rgba(var(--k-marca-rgb), .12); color: var(--k-marca); }
+:root[data-tema="oscuro"] .tr-est--info { color: var(--k-marca-clara); }
+.tr-est--malo { background: var(--k-malo-fondo); color: var(--k-malo); }
+.tr-resp { margin-top: 8px; padding: 10px 12px; border-radius: var(--k-r-md); background: var(--k-ok-fondo); }
+.tr-resp p { margin: 0; font: 400 .88rem/1.5 var(--k-fuente); color: var(--k-tinta); }
+.tr-resp__t { display: flex; gap: 6px; align-items: center; margin-bottom: 4px !important; font-weight: 700 !important; color: var(--k-ok) !important; }
+.tr-sin-resp { margin: 8px 0 0; display: flex; gap: 6px; align-items: center; font: 500 .8rem/1.3 var(--k-fuente); color: var(--k-apagado); }
+
+/* Recibida → En proceso → Realizada */
+.tr-pasos { list-style: none; margin: 0; padding: 0; display: flex; gap: 0; }
+.tr-paso {
+  position: relative; flex: 1 1 0; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  font: 600 .72rem/1.2 var(--k-fuente); color: var(--k-apagado); text-align: center;
+}
+.tr-paso i { position: relative; z-index: 1; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--k-linea); background: var(--k-papel); }
+.tr-paso + .tr-paso::before { content: ''; position: absolute; top: 7px; right: 50%; width: 100%; height: 2px; background: var(--k-linea); }
+.tr-paso--hecho i { background: var(--k-ok); border-color: var(--k-ok); }
+.tr-paso--hecho + .tr-paso::before { background: var(--k-ok); }
+.tr-paso--actual { color: var(--k-tinta); }
+.tr-paso--actual i { border-color: var(--k-marca); background: var(--k-marca); box-shadow: 0 0 0 4px rgba(var(--k-marca-rgb), .18); }
+
+.tr-sol__cara { display: inline-flex; margin-right: 2px; }
+.tr-sol__cara .kit-av { box-shadow: none; }
+
+/* ============================================================
+   PROPIOS DE LA WEB
+   ============================================================ */
+.app { min-height: 100vh; }
+.sx-puerta {
+  min-height: calc(100vh - var(--k-banner-alto, 60px));
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 24px 16px 12px;
+}
+.sx-puerta__caja { width: min(420px, 100%); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 26px 22px; }
+.sx-puerta__escudo { width: 132px; height: 132px; filter: drop-shadow(0 8px 18px rgba(0, 0, 0, .18)); }
+.sx-puerta__t { margin: 4px 0 0; font: 800 1.35rem/1.2 var(--k-fuente-titulo); color: var(--k-tinta); }
+.sx-puerta__p { margin: 0; font: 400 .9rem/1.5 var(--k-fuente); color: var(--k-tinta-2); }
+.sx-puerta__form { width: 100%; display: flex; flex-direction: column; gap: 12px; margin-top: 6px; text-align: left; }
+.sx-puerta__form input { font-size: 1.15rem; letter-spacing: .06em; text-align: center; }
+.sx-puerta__b { width: 100%; justify-content: center; }
+.sx-puerta__nota { display: flex; gap: 6px; align-items: flex-start; margin: 4px 0 0; font: 400 .78rem/1.45 var(--k-fuente); color: var(--k-tinta-2); text-align: left; }
+.sx-puerta__nota svg, .sx-puerta__error svg { flex: none; margin-top: 2px; }
+.sx-puerta__error {
+  width: 100%; display: flex; gap: 8px; align-items: flex-start; margin: 0; padding: 10px 12px; text-align: left;
+  border-radius: var(--k-r-md); background: var(--k-malo-fondo); color: var(--k-malo); font: 600 .84rem/1.45 var(--k-fuente);
+}
+.sx-puerta .kit-creditos { margin-top: 18px; }
+
+.sx-vista > .kit-tarjeta, .sx-vista > .tr-cab { width: min(900px, 100%); margin-inline: auto; }
+.tr-mias { display: flex; flex-direction: column; gap: 8px; }
+/* de CONTRATISTA-FLANDES 4.9: la cara a la derecha, el texto no se monta encima */
+.saludo { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.saludo__txt { position: relative; z-index: 1; min-width: 0; }
+.saludo > .kit-av { position: relative; z-index: 1; flex: 0 0 auto; margin-top: 2px; box-shadow: 0 0 0 3px rgba(255, 255, 255, .5); }
+.sx-sol__acc { margin-top: 12px; }
+.sx-sol__candado { display: flex; gap: 6px; align-items: flex-start; margin: 0; font: 500 .8rem/1.45 var(--k-fuente); color: var(--k-tinta-2); }
+.sx-sol__candado svg { flex: none; margin-top: 2px; }
