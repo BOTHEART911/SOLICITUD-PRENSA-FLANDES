@@ -166,11 +166,13 @@
   function listo(d) {
     A = d;
     if (d.config && K.piezas.creditos.configurar) K.piezas.creditos.configurar(d.config);
+    if (d.config && K.piezas.guia) K.piezas.guia.configurar(d.config);
     K.piezas.banner.montar({
       titulo: TITULO,
       nombre: A.yo.nombre, rol: titulo(A.yo.cargo),
       menu: [{ texto: 'Refrescar mis solicitudes', al: refrescar },
              /* en pantallas angostas el kit esconde el botón de tema del banner */
+             { texto: 'Descargar guía rápida', al: function () { if (K.piezas.guia) K.piezas.guia.descargar('SOLICITUD_PRENSA'); } },
              { texto: 'Modo claro / oscuro', al: function () { K.alternarTema(); } },
              { texto: 'Salir', al: salir, peligro: true }]
     });
@@ -215,8 +217,10 @@
     var boton = K.nodo('<button type="button" class="kit-btn kit-btn--marca tr-nueva__b">' + K.icono('mas', 18) + ' Nueva solicitud</button>');
     zona.appendChild(boton);
     boton.addEventListener('click', function () {
-      boton.hidden = true;
-      zona.appendChild(formulario(null, function () { boton.hidden = false; }));
+      /* .kit-btn pone su propio display y le gana a [hidden]: se esconde a mano
+         (si no, un segundo toque abría otro formulario debajo del primero) */
+      boton.hidden = true; boton.style.display = 'none';
+      zona.appendChild(formulario(null, function () { boton.hidden = false; boton.style.display = ''; }));
       zona.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
     c.appendChild(zona);
@@ -236,7 +240,7 @@
     var conteos = { '': L.length };
     L.forEach(function (x) { conteos[x.estado] = (conteos[x.estado] || 0) + 1; });
     var ops = [{ valor: '', texto: 'Todas' }];
-    ['PENDIENTE', 'EN PROCESO', 'REALIZADA'].forEach(function (e) { if (conteos[e]) ops.push({ valor: e, texto: TEXTO[e] + 's', tono: e === 'REALIZADA' ? 'ok' : 'aviso' }); });
+    ['PENDIENTE', 'EN PROCESO', 'REALIZADA'].forEach(function (e) { if (conteos[e]) ops.push({ valor: e, texto: { PENDIENTE: 'Recibidas', 'EN PROCESO': 'En proceso', REALIZADA: 'Realizadas' }[e] || TEXTO[e], tono: e === 'REALIZADA' ? 'ok' : 'aviso' }); });
     if (FILTRO && !conteos[FILTRO]) FILTRO = '';
     var fil = K.nodo('<div></div>');
     s.appendChild(fil);
@@ -287,7 +291,7 @@
       acc.appendChild(ed);
     } else {
       acc.appendChild(K.nodo('<p class="sx-sol__candado">' + K.icono('candado', 14) + ' ' +
-        (x.estado === 'REALIZADA' ? 'Ya está realizada.' : 'Ya está asignada al equipo:') + ' no se puede editar. Si necesitas un cambio, escríbele a Comunicaciones.</p>'));
+        (x.estado === 'REALIZADA' ? 'Ya está realizada' : 'Ya está asignada al equipo') + ' y no se puede editar. Si necesitas un cambio, escríbele a Comunicaciones.</p>'));
     }
     return d;
   }
