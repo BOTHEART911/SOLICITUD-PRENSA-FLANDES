@@ -87,7 +87,13 @@
     if (K.token()) {
       var quitar = K.piezas.esqueletos.poner(app, { forma: 'ficha', cuantos: 2, sitio: 'reemplaza', espera: 'Abriendo tus solicitudes' });
       K.pedir('inicio', {}, { ms: 45000 }).then(function (d) { quitar(); listo(d); },
-        function (e) { quitar(); K.ponerToken(''); puerta(e && e.codigo === 'SIN_RED' ? 'Sin conexión. Revisa tu internet y vuelve a entrar.' : tildes(e && e.message)); });
+        function (e) {
+          quitar();
+          /* 25/09 · un corte de red no cierra la sesión: se conserva el token y se vuelve a intentar al recargar */
+          var red = e && /^(SIN_RED|TIEMPO|RESPUESTA_NO_JSON)$/.test(e.codigo);
+          if (!red) K.ponerToken('');
+          puerta(e && e.codigo === 'SIN_RED' ? 'Sin conexión. Revisa tu internet y vuelve a entrar.' : tildes(e && e.message));
+        });
       return;
     }
     puerta();
