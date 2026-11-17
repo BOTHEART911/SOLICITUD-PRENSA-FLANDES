@@ -17,8 +17,8 @@
    Lo que hace
      · Ve sus solicitudes y en qué va cada una (Recibida → En proceso →
        Realizada) y quién la atiende.
-     · Pide una nueva con las MISMAS reglas del contratista (3 días de
-       antelación): las hace cumplir el CORE; aquí solo se ayudan.
+     · Pide una nueva con las MISMAS reglas del contratista (7 días de
+       antelación desde el 17/11/2026; aviso si el día ya tiene muchas solicitudes): las hace cumplir el CORE; aquí solo se ayudan.
      · Corrige las suyas SOLO mientras sigan pendientes y sin asignar.
 
    UN SOLO LLAMADO: entrar trae el arranque; pedir y corregir devuelven
@@ -45,6 +45,19 @@
       .replace(/\bterminacion\b/g, 'terminación').replace(/\bdespues\b/g, 'después').replace(/\bComunicate\b/g, 'Comunícate')
       .replace(/\bdigitos\b/g, 'dígitos').replace(/\bpaso\b/g, 'pasó').replace(/\bno es valido\b/g, 'no es válido');
   }
+  /* 17/11 · entrega o publicación desde hoy + 7 días calendario. El CORE nuevo ya lo manda así;
+     con el anterior (3 días) aquí se sube a 7 igual. Aquí las fechas viajan en ISO. */
+  var ANTELACION_MIN = 7;
+  function antelacion7(r) {
+    if (!r) return r;
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(r.hoy || '')), h = m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date();
+    h.setDate(h.getDate() + ANTELACION_MIN);
+    var d7 = h.getFullYear() + '-' + String(h.getMonth() + 1).padStart(2, '0') + '-' + String(h.getDate()).padStart(2, '0');
+    if (!r.minPublicacion || d7 > r.minPublicacion) r.minPublicacion = d7;
+    if (!(Number(r.antelacion) >= ANTELACION_MIN)) r.antelacion = ANTELACION_MIN;
+    return r;
+  }
+
   function iso(dmy) { var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(dmy || '')); return m ? m[3] + '-' + m[2] + '-' + m[1] : String(dmy || ''); }
   function dmy(i) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(i || '')); return m ? m[3] + '/' + m[2] + '/' + m[1] : String(i || ''); }
   function largo(i) {
@@ -170,7 +183,7 @@
   /* ══════════════ dentro ══════════════ */
 
   function listo(d) {
-    A = d;
+    A = antelacion7(d);
     if (d.config && K.piezas.creditos.configurar) K.piezas.creditos.configurar(d.config);
     if (d.config && K.piezas.guia) K.piezas.guia.configurar(d.config);
     K.piezas.banner.montar({
@@ -189,7 +202,7 @@
   }
 
   function refrescar() {
-    return K.pedir('inicio', {}, { ms: 45000 }).then(function (d) { A = d; inicio(); K.aviso('Al día.', 'ok', 2000); },
+    return K.pedir('inicio', {}, { ms: 45000 }).then(function (d) { A = antelacion7(d); inicio(); K.aviso('Al día.', 'ok', 2000); },
       function (e) { K.aviso(tildes((e && e.message) || 'No se pudo refrescar.'), 'malo', 7000); if (/INACTIVO|ya no existe|sesion/i.test(String(e && e.message))) salir(); });
   }
 
@@ -406,7 +419,11 @@
       }).then(function (ok) { if (ok) enviar(D, x, si); });
     });
 
-    if (K.piezas.fechas) setTimeout(function () { K.piezas.fechas.montar(f); }, 0);
+    if (K.piezas.fechas) setTimeout(function () {
+      K.piezas.fechas.montar(f);
+      /* 17/11 · día con 5 o más solicitudes PENDIENTE o EN PROCESO: aviso (no bloquea) */
+      if (K.piezas.fechas.vigilarVolumen) K.piezas.fechas.vigilarVolumen(pub, { llenas: function () { return (A && A.ocupadas) || {}; }, tope: (A && A.tope) || 5 });
+    }, 0);
     return f;
   }
 
